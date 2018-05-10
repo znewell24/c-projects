@@ -1,0 +1,41 @@
+/***********************************************************************
+ * Module:
+ *    Week 09, Sort Binary
+ *    Brother Ercanbrack, CS 235
+ * Author:
+ *    Br. Helfrich & Zach Newell
+ * Summary:
+ *    This program will implement the Binary Tree Sort
+ ************************************************************************/
+
+#ifndef SORT_BINARY_H
+#define SORT_BINARY_H
+
+#include "bst.h"
+#include <iostream>
+using namespace std;
+
+/*****************************************************
+ * SORT BINARY
+ * Perform the binary tree sort
+ ****************************************************/
+template <class T>
+void sortBinary(T array[], int num)
+{
+	BST<T> tree;
+	BSTIterator<T> it;
+
+	for (int i = 0; i < num; i++)
+	{
+		tree.insert(array[i]);
+	}
+
+	it = BSTIterator<T>(tree.begin());
+	for (int i = 0; i < num; i++, it++)
+	{
+		array[i] = *it;
+	}
+}
+
+
+#endif // SORT_BINARY_H
