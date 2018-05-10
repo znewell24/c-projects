@@ -1,0 +1,187 @@
+/***********************************************************************
+* Author:
+*    Zachary Newell
+* Summary: 
+*    This program reads in a MadLib game file and plays the game
+*    with the user. At the end of the game it asks if they want to play again
+*    Still has some spacing issues when running.
+************************************************************************/
+
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+void askQuestions(char word[]);
+void specialChar(char word[]);
+void playAgain();
+
+/**********************************************************************
+ * This function gets the madlib file from the user
+ ***********************************************************************/
+void getFile(char fileName[])
+{
+   cout << "Please enter the filename of the Mad Lib: ";
+   cin >> fileName;
+}
+
+/**********************************************************************
+ * read the file which the user entered 
+ ***********************************************************************/
+int readFile(char fileName[], char story[][32])
+{
+   ifstream fin(fileName);
+   int length = 0;
+   if (fin.fail())
+   {
+      cout << "Error\n";
+      fin.close();
+   }
+
+   else
+   {
+      while (fin >> story[length])
+      {
+         if (story[length][0] == '<' && isalpha(story[length][1]))
+         {
+            askQuestions(story[length]);               
+         }
+         else if (story[length][0] == '<' && !isalpha(story[length][1]))
+         {
+            specialChar(story[length]);
+         }
+
+         length++;
+      }
+
+      fin.close();
+   }
+   
+   return length;
+}
+
+/**********************************************************************
+ * ask the questions from the madlib 
+ ***********************************************************************/
+void askQuestions(char word[])
+{
+   cout << "\t" << (char)toupper(word[1]);
+   for (int i = 2; word[i] != '>'; i++)
+   {
+      if (word[i] == '_')
+      {
+         cout << " ";
+      }
+      else
+         cout << word[i];
+   }
+   cout << ": ";
+   cin.ignore();
+   cin.getline(word, 32);
+   cout << endl;
+}
+
+/**********************************************************************
+ * display the story back to the user with correct spacing
+ ***********************************************************************/
+void display(char story[][32], int length)
+{
+   cout << endl;
+   for (int i = 0; i < length; i++)
+   {
+      if (i == 0)
+      {
+         cout << story[i];
+      }
+      else if (story[i][0] == '\n' || story[i][0] == ' '
+               || story[i][0] == '\"' || story[i][0] == '\'')
+      {
+         cout << story[i];   
+      } 
+      else if (story[i - 1][0] == '\n' || story[i - 1][0] == '\"')
+      {
+         cout << story[i];
+      }
+      else if (story[i][0] == '.' || story[i][0] == ',')
+      {
+         cout << story[i];
+      }
+      else
+      {
+         cout << " " << story[i];
+      }
+   }
+}
+
+/**********************************************************************
+ * checks the special characters
+ ***********************************************************************/
+void specialChar(char word[])
+{
+   switch (word[1])
+   {
+      case '#':
+         word[0] = '\n';
+         word[1] = '\0';
+         break;
+      case '{':
+         word[0] = ' ';
+         word[1] = '\"';
+         word[2] = '\0';
+         break;
+      case '}':
+         word[0] = '\"';
+         word[1] = '\0';
+         break;
+      case '[':
+         word[0] = ' ';
+         word[1] = '\'';
+         word[2] = '\0';
+         break;
+      case ']':
+         word[0] = '\'';
+         word[1] = '\0';
+         break;
+   }  
+}
+
+/**********************************************************************
+ * asks the user if they want to play again.
+ * then runs the program again.
+ ***********************************************************************/
+void playAgain()
+{
+   char answer;
+   cout << endl;
+   cout << "Do you want to play again (y/n)? ";
+   cin >> answer;
+
+   if (answer == 'y')
+   {      
+      char story[256][32];
+      char fileName[256];
+         
+      getFile(fileName);
+      int length = readFile(fileName, story);
+      display(story, length);
+      playAgain();
+   }
+   else
+      cout << "Thank you for playing.\n";
+}
+
+/**********************************************************************
+ * main initialized variables and calls the get and display functions
+ ***********************************************************************/
+int main()
+{
+   char story[256][32];
+   char fileName[256];
+
+   getFile(fileName);
+   int length = readFile(fileName, story);
+   display(story, length);
+   playAgain();
+   
+   return 0;
+}
