@@ -1,0 +1,160 @@
+#ifndef BNODE_H
+#define BNODE_H
+
+#include <iostream> 
+#include <cassert>
+
+/*****************************************************************
+ * BINARY NODE
+ * A single node in a binary tree.  Note that the node does not know
+ * anything about the properties of the tree so no validation can be done.
+ *****************************************************************/
+template <class T>
+class BinaryNode
+{
+public:
+	BinaryNode() : pLeft(NULL), pRight(NULL), pParent(NULL), data(NULL) {}
+
+	BinaryNode(const T & t) {
+		data = t;
+		pLeft = NULL;
+		pRight = NULL;
+		pParent = NULL;
+	}
+
+   // return size (i.e. number of nodes in tree)
+   int size() const
+   {
+		   return 1 +
+			   (pLeft == NULL ? 0 : pLeft->size()) +
+			   (pRight == NULL ? 0 : pRight->size());
+	  }
+   
+   // add a node to the left/right
+   void addLeft (BinaryNode <T> * pNode);
+   void addRight(BinaryNode <T> * pNode);
+
+   // create a node and add it to the left/right
+   void addLeft (const T & t) throw (const char *);
+   void addRight(const T & t) throw (const char *);
+   
+   // since no validation is done, everything is public
+   BinaryNode <T> * pLeft;
+   BinaryNode <T> * pRight;
+   BinaryNode <T> * pParent;
+   T data;
+};
+
+/*****************************************************************
+* BINARY NODE : add left
+* add a node on the left with a pointer
+*****************************************************************/
+template <class T>
+void BinaryNode<T>::addLeft(BinaryNode<T> * pNode)
+{
+	this->pLeft = pNode;
+	if (pNode != NULL)
+	{
+		pNode->pParent = this;
+	}
+	
+}
+
+/*****************************************************************
+* BINARY NODE : add left
+* add a node on the left with the data
+*****************************************************************/
+template <class T>
+void BinaryNode<T>::addLeft(const T & t) throw (const char *)
+{
+	try
+	{
+		BinaryNode<T> * newNode = new BinaryNode<T>(t);
+		newNode->pParent = this;
+		this->pLeft = newNode;				
+	}
+	catch (std::bad_alloc)
+	{
+		throw "ERROR: Unable to allocate a node";
+	}
+}
+
+/*****************************************************************
+* BINARY NODE : add right
+* add a node on the right with a pointer
+*****************************************************************/
+template <class T>
+void BinaryNode<T>::addRight(BinaryNode<T> * pNode)
+{
+	this->pRight = pNode;
+	if (pNode != NULL)
+	{
+		pNode->pParent = this;
+	}
+	
+}
+
+/*****************************************************************
+* BINARY NODE : add right
+* add a node on the right with the data
+*****************************************************************/
+template <class T>
+void BinaryNode<T>::addRight(const T & t) throw (const char *)
+{
+	try
+	{
+		BinaryNode<T> * newNode = new BinaryNode<T>(t);
+		newNode->pParent = this;
+		this->pRight = newNode;
+	}
+	catch (std::bad_alloc)
+	{
+		throw "ERROR: Unable to allocate a node";
+	}
+}
+
+/*****************************************************************
+* delete Binary Tree
+* deletes all children and itself, recursive.
+*****************************************************************/
+template <class T>
+void deleteBinaryTree(BinaryNode<T> *& pNode)
+{
+	if (pNode != NULL)
+	{
+		deleteBinaryTree(pNode->pLeft);
+		deleteBinaryTree(pNode->pRight);
+
+		delete pNode;
+		pNode = NULL;
+	}
+	else
+	{
+		return;
+	}
+	
+}
+
+/*****************************************************************
+* overload the insertion operator
+* allows for inserting new nodes in the tree
+*****************************************************************/
+template <class T>
+std::ostream & operator<< (std::ostream & out, BinaryNode<T> * pNode)
+{
+	if (pNode->pLeft != NULL)
+	{
+		out << pNode->pLeft;
+	}
+
+	out << pNode->data << " ";
+
+	if (pNode->pRight != NULL)
+	{
+		out << pNode->pRight;
+	}
+
+	return out;
+}
+
+#endif // BNODE_H
