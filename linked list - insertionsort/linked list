@@ -1,0 +1,110 @@
+/*************************************************************
+* node.h
+* A node of a link list.
+**************************************************************/
+#ifndef NODE_H
+#define NODE_H
+/*************************************************************
+* Node
+* A class that encapsulates a link list.
+**************************************************************/
+template <class T>
+class Node
+{
+public:
+	Node() : pNext(NULL) {}
+	Node(const T & t) {
+		data = t;
+		pNext = NULL;
+	}
+
+	T data;
+	Node<T> * pNext;
+};
+
+/*************************************************************
+* copy
+* copy a linked-list
+**************************************************************/
+template <class T>
+Node <T>* copy(Node<T> * ptr) {
+	Node<T> * temp = ptr;
+	Node<T> * pnew = new Node<T>(temp->data);
+	Node<T> * const head = pnew;
+
+	temp = temp->pNext;
+
+	while (temp != NULL)
+	{
+		pnew = pnew->pNext = new Node<T>();
+		pnew->data = temp->data;
+
+		pnew->pNext = NULL;
+		temp = temp->pNext;
+	}
+	return head;
+}
+
+/*************************************************************
+* insert
+* insert an item into a linked-list
+**************************************************************/
+template <class T>
+void insert(const T & t, Node <T> *& pcurrent, bool first = false) {
+	Node<T> * pnew = new Node<T>(t);
+	if (pcurrent == NULL || first)
+	{
+		pnew->pNext = pcurrent;
+		pcurrent = pnew;
+	}
+	else
+	{
+		pnew->pNext = pcurrent->pNext;
+		pcurrent->pNext = pnew;
+	}
+}
+
+/*************************************************************
+* find
+* find an item a linked-list
+**************************************************************/
+template <class T>
+Node <T> * find(Node<T> * ptr, const T &t) {
+	Node<T> * current = ptr;
+	while (current != NULL && current->data != t)
+	{
+		current = current->pNext;
+	}
+	return current;
+}
+
+/*************************************************************
+* freeData
+* free up the linked list by deleting its data
+**************************************************************/
+template <class T>
+void freeData(Node <T> *& phead) {
+	for (Node<T> * ptr = phead; ptr; ptr = ptr->pNext) {
+		delete ptr;
+	}
+	phead = NULL;	
+}
+
+template <class T>
+std::ostream & operator << (std::ostream & out, Node<T>* node) {
+	while (node != NULL)
+	{
+		if (node->pNext != NULL)
+		{
+			out << node->data << ", ";
+		}
+		else
+		{
+			out << node->data;
+		}
+		node = node->pNext;
+	}
+	return out;
+}
+
+#endif
