@@ -1,0 +1,51 @@
+/***********************************************************************
+ * Header:
+ *    INSERTION SORT
+ * Author
+ *    Zachary Newell
+ ************************************************************************/
+
+#ifndef INSERTION_SORT_H
+#define INSERTION_SORT_H
+
+#include "node.h"
+
+/***********************************************
+ * INSERTION SORT
+ * Sort the items in the array
+ **********************************************/
+template <class T>
+void sortInsertion(T array[], int num)
+{
+	Node<T> *pSort = new Node<T>(array[0]);
+	for (int i = 1; i < num; i++)
+	{
+		for (Node<T> * p = pSort; p; p = p->pNext)
+		{
+			if (array[i] < pSort->data)
+			{
+				insert(array[i], pSort, true);
+				break;
+			}
+			else if ((p->pNext) && array[i] > p->data && array[i] < p->pNext->data)
+			{
+				insert(array[i], p);
+				break;
+			}
+			else if (p->pNext == NULL)
+			{
+				insert(array[i], p);
+				break;
+			}
+		}
+	}
+	int i;
+	Node<T> * ptr;
+	for (i = 0, ptr = pSort; i < num && ptr; i++, ptr = ptr->pNext)
+	{
+		array[i] = ptr->data;
+	}
+}
+
+#endif // INSERTION_SORT_H
+
