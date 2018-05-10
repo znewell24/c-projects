@@ -1,0 +1,223 @@
+/***********************************************************************
+* Author:
+*    Zachary Newell
+* Summary: 
+*    this program is a functioning calendar with leap years added
+*    any months from january 1753
+************************************************************************/
+
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int getMonth();
+int getYear();
+int computeOffset(int year, int month);
+int daysInMonth(int month, int year);
+int numDaysYear(int year);
+bool isLeapYear(int year);
+
+/**********************************************************************
+ * prompts for month number between 1 and 12
+ ***********************************************************************/
+int getMonth()
+{
+   int month;
+   cout << "Enter a month number: ";
+   cin >> month;
+
+   while (month < 1 || month > 12)
+   {
+      cout << "Month must be between 1 and 12.\n"
+           << "Enter a month number: ";
+      cin >> month;
+   }
+   
+   return month;
+}
+
+/**********************************************************************
+ * prompt and return year after 1753  
+ ***********************************************************************/
+int getYear()
+{
+   int year;
+   cout << "Enter year: ";
+   cin >> year;
+
+   while (year < 1753)
+   {
+      cout << "Year must be 1753 or later.\n"
+           << "Enter year: ";
+      cin >> year;
+   }
+
+   return year;
+}
+
+/**********************************************************************
+ * This function adds all the days from 1753 in order to calculate 
+ * the offset at the beginning of each month
+ ***********************************************************************/
+int computeOffset(int month, int year)
+{
+   int totalDays = 0;
+   for (int i = 1753; i < year; i++)
+   {
+      totalDays += numDaysYear(i);
+   }
+
+   for (int a = 1; a < month; a++)
+   {
+      totalDays += daysInMonth(a, year);
+   }
+
+   return totalDays % 7;
+}
+
+/**********************************************************************
+ * calculates the number of days in each month including leap years 
+***********************************************************************/
+int daysInMonth(int month, int year)
+{
+   int numDays;
+   if (month == 1)
+      numDays = 31;
+   else if (month == 2)
+   {
+      if (isLeapYear(year) == true)
+         numDays = 29;
+      else
+         numDays = 28;
+   }
+   else if (month == 3)
+      numDays = 31;
+   else if (month == 4)
+      numDays = 30;
+   else if (month == 5)
+      numDays = 31;
+   else if (month == 6)
+      numDays = 30;
+   else if (month == 7)
+      numDays = 31;
+   else if (month == 8)
+      numDays = 31;
+   else if (month == 9)
+      numDays = 30;
+   else if (month == 10)
+      numDays = 31;
+   else if (month == 11)
+      numDays = 30;
+   else if (month == 12)
+      numDays = 31;
+   
+   return numDays;
+}
+
+/**********************************************************************
+ * determines which years are leap years 
+ ***********************************************************************/
+bool isLeapYear(int year)
+{
+   if (year % 4 != 0)
+      return false;
+   else if (year % 100 == 0 && year % 400 != 0)
+      return false;
+   return true;
+}
+
+/**********************************************************************
+ * calculates how many days are in a specific year
+ ***********************************************************************/
+int numDaysYear(int year)
+{
+   if (isLeapYear(year) == true)
+      return 366;
+   else
+      return 365;
+}
+
+/**********************************************************************
+ * diplays the header
+ ***********************************************************************/
+void displayHeader(int year)
+{
+   cout << year << endl;
+   cout << "  Su  Mo  Tu  We  Th  Fr  Sa\n";
+}
+
+/**********************************************************************
+ * display the proper month with if statements
+ ***********************************************************************/
+void displayMonth(int month)
+{
+   cout << endl;
+   if (month == 1)
+      cout << "January, ";
+   else if (month == 2)
+      cout << "February, ";
+   else if (month == 3)
+      cout << "March, ";
+   else if (month == 4)
+      cout << "April, ";
+   else if (month == 5)
+      cout << "May, ";
+   else if (month == 6)
+      cout << "June, ";
+   else if (month == 7)
+      cout << "July, ";
+   else if (month == 8)
+      cout << "August, ";
+   else if (month == 9)
+      cout << "September, ";
+   else if (month == 10)
+      cout << "October, ";
+   else if (month == 11)
+      cout << "November, ";
+   else if (month == 12)
+      cout << "December, ";
+}
+
+/**********************************************************************
+ * the main display function which uses offset, numDaysMonth, month,
+ * and year to display the proper calendar table
+ ***********************************************************************/
+void displayTable(int month, int year, int offset)
+{
+   offset += 1;
+   if (offset == 1)
+      cout << setw(4) << "";
+   else if (offset == 2)
+      cout << setw(8) << "";
+   else if (offset == 3)
+      cout << setw(12) << "";
+   else if (offset == 4)
+      cout << setw(16) << "";
+   else if (offset == 5)
+      cout << setw(20) << "";
+   else if (offset == 6)
+      cout << setw(24) << "";
+
+   for (int i = 1; i <= daysInMonth(month, year); i++)
+   {
+      cout << setw(4) << i;
+      if ((offset + i) % 7 == 0 || i == daysInMonth(month, year))
+         cout << endl;
+   }
+}
+
+/**********************************************************************
+ * Main calls on the display functions as well as the get functions
+ * to prompt the user and then display the calendar on screen
+ ***********************************************************************/
+int main()
+{
+   int month = getMonth();
+   int year = getYear();
+   int offset = computeOffset(month, year);
+   
+   displayMonth(month);
+   displayHeader(year);
+   displayTable(month, year, offset);
+   return 0;
+}
